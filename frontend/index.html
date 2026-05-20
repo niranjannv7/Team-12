@@ -1,0 +1,322 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Smart Attendance — Face Recognition System</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;1,9..40,300&display=swap"
+    rel="stylesheet" />
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+
+<body class="login-page">
+
+  <!-- Animated background grid -->
+  <div class="bg-grid"></div>
+  <div class="bg-orb orb-1"></div>
+  <div class="bg-orb orb-2"></div>
+
+  <div class="login-container">
+    <!-- Logo / Brand -->
+    <div class="brand">
+      <div class="brand-icon">
+        <svg width="32" height="32" viewBox="0 0 32 32" fill="none">
+          <circle cx="16" cy="10" r="5" stroke="currentColor" stroke-width="2" />
+          <path d="M8 28c0-4.418 3.582-8 8-8s8 3.582 8 8" stroke="currentColor" stroke-width="2"
+            stroke-linecap="round" />
+          <circle cx="16" cy="16" r="14" stroke="currentColor" stroke-width="1.5" stroke-dasharray="4 2" />
+        </svg>
+      </div>
+      <div class="brand-text">
+        <span class="brand-name">Smart Attendance</span>
+        <span class="brand-sub">Face Recognition System</span>
+      </div>
+    </div>
+
+    <!-- Role Selection -->
+    <div class="login-card" id="roleSelect">
+      <h1 class="login-title">Welcome Back</h1>
+      <p class="login-desc">Choose your role to continue</p>
+
+      <div class="role-cards">
+        <button class="role-btn" id="btnFaculty" onclick="showLogin('faculty')">
+          <div class="role-icon faculty-icon">
+            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+              <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
+              <circle cx="9" cy="7" r="4" />
+              <path d="M23 21v-2a4 4 0 0 0-3-3.87" />
+              <path d="M16 3.13a4 4 0 0 1 0 7.75" />
+            </svg>
+          </div>
+          <span class="role-label">Faculty</span>
+          <span class="role-desc-text">Manage attendance & students</span>
+          <div class="role-arrow">→</div>
+        </button>
+
+        <button class="role-btn" id="btnStudent" onclick="showLogin('student')">
+          <div class="role-icon student-icon">
+            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+              <path d="M22 10v6M2 10l10-5 10 5-10 5z" />
+              <path d="M6 12v5c3 3 9 3 12 0v-5" />
+            </svg>
+          </div>
+          <span class="role-label">Student</span>
+          <span class="role-desc-text">Check your attendance records</span>
+          <div class="role-arrow">→</div>
+        </button>
+      </div>
+
+      <div class="divider-row">
+        <span class="divider-line"></span>
+        <span class="divider-text">New here?</span>
+        <span class="divider-line"></span>
+      </div>
+
+      <button class="role-btn register-btn" onclick="showLogin('register')">
+        <div class="role-icon register-icon">
+          <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+            <path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
+            <circle cx="8.5" cy="7" r="4" />
+            <line x1="20" y1="8" x2="20" y2="14" />
+            <line x1="23" y1="11" x2="17" y2="11" />
+          </svg>
+        </div>
+        <span class="role-label">Register as Faculty</span>
+        <span class="role-desc-text">Create a new faculty account</span>
+        <div class="role-arrow">→</div>
+      </button>
+    </div>
+
+    <!-- Faculty Login Form -->
+    <div class="login-card hidden" id="facultyLogin">
+      <button class="back-btn" onclick="showRole()">← Back</button>
+      <div class="form-header">
+        <div class="form-icon faculty-icon">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+            <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
+            <circle cx="9" cy="7" r="4" />
+            <path d="M23 21v-2a4 4 0 0 0-3-3.87" />
+            <path d="M16 3.13a4 4 0 0 1 0 7.75" />
+          </svg>
+        </div>
+        <h2>Faculty Login</h2>
+      </div>
+
+      <form class="auth-form" onsubmit="handleFacultyLogin(event)">
+        <div class="form-group">
+          <label>Full Name or Email</label>
+          <input type="text" id="facultyName" placeholder="e.g. Dr. Ramesh Kumar or email" required autocomplete="off" />
+        </div>
+        <div class="form-group">
+          <label>Password</label>
+          <div class="input-wrap">
+            <input type="password" id="facultyPass" placeholder="Enter password" required />
+            <button type="button" class="toggle-pass" onclick="togglePass('facultyPass')">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" />
+                <circle cx="12" cy="12" r="3" />
+              </svg>
+            </button>
+          </div>
+        </div>
+        <div class="form-error hidden" id="facultyError">Incorrect name or password. Please try again.</div>
+        <button type="submit" class="submit-btn faculty-btn">
+          <span>Login as Faculty</span>
+          <div class="btn-spinner hidden"></div>
+        </button>
+        <div class="forgot-row">
+          <button type="button" class="forgot-link" onclick="showLogin('forgot')">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <rect x="3" y="11" width="18" height="11" rx="2" ry="2" />
+              <path d="M7 11V7a5 5 0 0 1 10 0v4" />
+            </svg>
+            Forgot Password?
+          </button>
+        </div>
+      </form>
+    </div>
+
+    <!-- Student Login Form -->
+    <div class="login-card hidden" id="studentLogin">
+      <button class="back-btn" onclick="showRole()">← Back</button>
+      <div class="form-header">
+        <div class="form-icon student-icon">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+            <path d="M22 10v6M2 10l10-5 10 5-10 5z" />
+            <path d="M6 12v5c3 3 9 3 12 0v-5" />
+          </svg>
+        </div>
+        <h2>Student Login</h2>
+      </div>
+
+      <form class="auth-form" onsubmit="handleStudentLogin(event)">
+        <div class="form-group">
+          <label>Full Name</label>
+          <input type="text" id="studentName" placeholder="e.g. Aravind Kumar" required autocomplete="off" />
+        </div>
+        <div class="form-group">
+          <label>Register Number</label>
+          <input type="text" id="studentReg" placeholder="e.g. 22CS001" required autocomplete="off" />
+        </div>
+        <div class="form-error hidden" id="studentError">Student not found. Check your details.</div>
+        <button type="submit" class="submit-btn student-btn">
+          <span>Login as Student</span>
+          <div class="btn-spinner hidden"></div>
+        </button>
+      </form>
+    </div>
+
+    <!-- Faculty Register Form -->
+    <div class="login-card hidden" id="registerLogin">
+      <button class="back-btn" onclick="showRole()">← Back</button>
+      <div class="form-header">
+        <div class="form-icon register-icon">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+            <path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
+            <circle cx="8.5" cy="7" r="4" />
+            <line x1="20" y1="8" x2="20" y2="14" />
+            <line x1="23" y1="11" x2="17" y2="11" />
+          </svg>
+        </div>
+        <h2>Create Faculty Account</h2>
+      </div>
+
+      <form class="auth-form" onsubmit="handleFacultyRegister(event)">
+        <div class="form-group">
+          <label>Full Name</label>
+          <input type="text" id="regName" placeholder="e.g. Dr. Ramesh Kumar" required autocomplete="off" />
+        </div>
+        <div class="form-group">
+          <label>Department</label>
+          <input type="text" id="regDept" placeholder="e.g. Computer Science & Engineering" required
+            autocomplete="off" />
+        </div>
+        <div class="form-group">
+          <label>Subject / Subjects Handling</label>
+          <input type="text" id="regSubject" placeholder="e.g. Data Structures, Algorithms" required
+            autocomplete="off" />
+        </div>
+        <div class="form-group">
+          <label>Email Address</label>
+          <input type="email" id="regEmail" placeholder="faculty@college.edu" required autocomplete="off" />
+        </div>
+        <div class="form-group">
+          <label>Password</label>
+          <div class="input-wrap">
+            <input type="password" id="regPass" placeholder="Minimum 8 characters" required minlength="8"
+              oninput="updateRegPassStrength(this.value)" />
+            <button type="button" class="toggle-pass" onclick="togglePass('regPass')">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" />
+                <circle cx="12" cy="12" r="3" />
+              </svg>
+            </button>
+          </div>
+          <div class="password-strength" id="regPassStrength"></div>
+        </div>
+        <div class="form-group">
+          <label>Confirm Password</label>
+          <div class="input-wrap">
+            <input type="password" id="regConfirmPass" placeholder="Re-enter your password" required />
+          </div>
+        </div>
+        <div class="form-error hidden" id="registerError"></div>
+        <div class="form-success hidden" id="registerSuccess">Account created! You can now log in.</div>
+        <button type="submit" class="submit-btn faculty-btn">
+          <span>Create Account</span>
+          <div class="btn-spinner hidden"></div>
+        </button>
+        <p style="text-align:center;font-size:0.78rem;color:var(--text-muted)">
+          Already have an account?
+          <button type="button" onclick="showLogin('faculty')"
+            style="background:none;border:none;color:var(--accent-hov);cursor:pointer;font-size:0.78rem;text-decoration:underline">Sign
+            in</button>
+        </p>
+      </form>
+    </div>
+
+    <!-- Forgot Password Panel -->
+    <div class="login-card hidden" id="forgotLogin">
+      <button class="back-btn" onclick="showLogin('faculty')">← Back to Login</button>
+      <div class="form-header">
+        <div class="form-icon forgot-icon">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+            <rect x="3" y="11" width="18" height="11" rx="2" ry="2" />
+            <path d="M7 11V7a5 5 0 0 1 10 0v4" />
+          </svg>
+        </div>
+        <h2>Forgot Password</h2>
+      </div>
+      <p class="forgot-desc">Enter your registered name and email. We'll verify your account and let you set a new
+        password.</p>
+
+      <!-- Step 1: Verify identity -->
+      <div id="forgotStep1">
+        <form class="auth-form" onsubmit="handleForgotVerify(event)">
+          <div class="form-group">
+            <label>Full Name</label>
+            <input type="text" id="forgotName" placeholder="e.g. Dr. Ramesh Kumar" required autocomplete="off" />
+          </div>
+          <div class="form-group">
+            <label>Registered Email</label>
+            <input type="email" id="forgotEmail" placeholder="faculty@college.edu" required autocomplete="off" />
+          </div>
+          <div class="form-error hidden" id="forgotError"></div>
+          <button type="submit" class="submit-btn faculty-btn">
+            <span>Verify Account</span>
+            <div class="btn-spinner hidden"></div>
+          </button>
+        </form>
+      </div>
+
+      <!-- Step 2: Set new password (shown after verification) -->
+      <div id="forgotStep2" class="hidden">
+        <div class="verified-badge">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+            <polyline points="20 6 9 17 4 12" />
+          </svg>
+          Account verified
+        </div>
+        <form class="auth-form" onsubmit="handleForgotReset(event)">
+          <div class="form-group">
+            <label>New Password</label>
+            <div class="input-wrap">
+              <input type="password" id="forgotNewPass" placeholder="Minimum 8 characters" required minlength="8"
+                oninput="updateForgotPassStrength(this.value)" />
+              <button type="button" class="toggle-pass" onclick="togglePass('forgotNewPass')">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" />
+                  <circle cx="12" cy="12" r="3" />
+                </svg>
+              </button>
+            </div>
+            <div class="password-strength" id="forgotPassStrength"></div>
+          </div>
+          <div class="form-group">
+            <label>Confirm New Password</label>
+            <div class="input-wrap">
+              <input type="password" id="forgotConfirmPass" placeholder="Re-enter new password" required />
+            </div>
+          </div>
+          <div class="form-error hidden" id="forgotResetError"></div>
+          <div class="form-success hidden" id="forgotResetSuccess">Password reset! Redirecting to login…</div>
+          <button type="submit" class="submit-btn faculty-btn">
+            <span>Reset Password</span>
+            <div class="btn-spinner hidden"></div>
+          </button>
+        </form>
+      </div>
+    </div>
+
+    <p class="footer-note">© 2026 Smart Attendance · Secure Face Recognition</p>
+  </div>
+
+  <script src="js/api.js?v=5"></script>
+  <script src="js/main.js?v=5"></script>
+</body>
+
+</html>

@@ -1,0 +1,676 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Faculty Dashboard — Smart Attendance</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;1,9..40,300&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="css/style.css"/>
+  <link rel="stylesheet" href="css/dashboard.css"/>
+</head>
+<body class="dashboard-page">
+
+  <div class="bg-grid"></div>
+
+  <!-- Sidebar -->
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar-brand">
+      <div class="brand-icon small">
+        <svg width="20" height="20" viewBox="0 0 32 32" fill="none">
+          <circle cx="16" cy="10" r="5" stroke="currentColor" stroke-width="2"/>
+          <path d="M8 28c0-4.418 3.582-8 8-8s8 3.582 8 8" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+          <circle cx="16" cy="16" r="14" stroke="currentColor" stroke-width="1.5" stroke-dasharray="4 2"/>
+        </svg>
+      </div>
+      <span>Smart Attendance</span>
+    </div>
+
+    <nav class="sidebar-nav">
+      <a href="#attendance" class="nav-item active" onclick="showSection('attendance', this)">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/>
+          <circle cx="12" cy="13" r="4"/>
+        </svg>
+        <span>Mark Attendance</span>
+      </a>
+      <a href="#absentees" class="nav-item" onclick="showSection('absentees', this)">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
+          <circle cx="9" cy="7" r="4"/>
+          <line x1="23" y1="11" x2="17" y2="17"/><line x1="17" y1="11" x2="23" y2="17"/>
+        </svg>
+        <span>Absentee List</span>
+      </a>
+      <a href="#students" class="nav-item" onclick="showSection('students', this)">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M22 10v6M2 10l10-5 10 5-10 5z"/>
+          <path d="M6 12v5c3 3 9 3 12 0v-5"/>
+        </svg>
+        <span>Manage Students</span>
+      </a>
+      <a href="#reports" class="nav-item" onclick="showSection('reports', this)">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+          <polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/>
+          <line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/>
+        </svg>
+        <span>Reports</span>
+      </a>
+      <a href="#password" class="nav-item" onclick="showSection('password', this)">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>
+          <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+        </svg>
+        <span>Reset Password</span>
+      </a>
+    </nav>
+
+    <div class="sidebar-footer">
+      <div class="faculty-profile">
+        <div class="avatar" id="sidebarAvatar">DR</div>
+        <div class="profile-info">
+          <span class="profile-name" id="sidebarName">Dr. Ramesh</span>
+          <span class="profile-role">Faculty</span>
+        </div>
+      </div>
+      <button class="logout-btn" onclick="logout()">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
+          <polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/>
+        </svg>
+      </button>
+    </div>
+  </aside>
+
+  <!-- Mobile sidebar toggle -->
+  <button class="sidebar-toggle" onclick="toggleSidebar()">
+    <span></span><span></span><span></span>
+  </button>
+
+  <!-- Main Content -->
+  <main class="main-content">
+
+    <!-- ── SECTION: Mark Attendance ── -->
+    <section class="dash-section active" id="section-attendance">
+      <div class="section-header">
+        <div>
+          <h2 class="section-title">Mark Attendance</h2>
+          <p class="section-sub">Use facial recognition to mark today's attendance</p>
+        </div>
+        <div class="live-date" id="liveDate"></div>
+      </div>
+
+      <!-- Time Settings -->
+      <div class="card time-settings-card" id="timeSettingsCard">
+        <h3 class="card-title">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/>
+          </svg>
+          Session Configuration
+        </h3>
+        <div class="time-settings-grid">
+          <div class="form-group">
+            <label>Subject</label>
+            <select id="subjectName" class="dark-input">
+              <option value="" disabled selected>Select Subject</option>
+              <option value="Mathematics">Mathematics</option>
+              <option value="Computer Science">Computer Science</option>
+              <option value="Physics">Physics</option>
+              <option value="Chemistry">Chemistry</option>
+              <option value="Biology">Biology</option>
+              <option value="English">English</option>
+              <option value="History">History</option>
+              <option value="Geography">Geography</option>
+              <option value="Economics">Economics</option>
+              <option value="Business Studies">Business Studies</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Class</label>
+            <select id="className" class="dark-input">
+              <option value="" disabled selected>Select Class</option>
+              <option value="1st Year">1st Year</option>
+              <option value="2nd Year">2nd Year</option>
+              <option value="3rd Year">3rd Year</option>
+              <option value="4th Year">4th Year</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Section</label>
+            <select id="sectionName" class="dark-input">
+              <option value="" disabled selected>Select Section</option>
+              <option value="A">Section A</option>
+              <option value="B">Section B</option>
+              <option value="C">Section C</option>
+              <option value="D">Section D</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Session Start Time</label>
+            <input type="time" id="sessionStartTime" class="dark-input" required/>
+          </div>
+          <div class="form-group">
+            <label>Session End Time</label>
+            <input type="time" id="sessionEndTime" class="dark-input" required/>
+          </div>
+        </div>
+        <button class="action-btn primary" onclick="startAttendanceSession()">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="12" cy="12" r="10"/><polygon points="10 8 16 12 10 16 10 8"/>
+          </svg>
+          Start Session
+        </button>
+      </div>
+
+      <!-- Subject-wise Session Tracker -->
+      <div class="card subject-tracker-card" id="subjectTrackerCard">
+        <h3 class="card-title">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/>
+            <rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/>
+          </svg>
+          Subject-wise Sessions
+          <span class="tracker-total-badge" id="trackerTotalBadge">0 total</span>
+        </h3>
+        <div class="subject-tracker-grid" id="subjectTrackerGrid">
+          <div class="loading-placeholder"><span>Loading subjects…</span></div>
+        </div>
+      </div>
+
+      <!-- Camera Feed -->
+      <div class="card camera-card hidden" id="cameraCard">
+        <div class="camera-header">
+          <div class="session-info">
+            <span class="session-badge live">● LIVE</span>
+            <span class="session-subject" id="sessionSubjectLabel">–</span>
+          </div>
+          <div class="session-end-info">
+            <span class="end-label">Ends at</span>
+            <span class="session-timer" id="sessionEndDisplay">–</span>
+          </div>
+          <div class="session-countdown" id="sessionCountdown">–</div>
+          <button class="action-btn danger small" onclick="stopSession()">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <rect x="3" y="3" width="18" height="18" rx="2" ry="2"/>
+            </svg>
+            Stop
+          </button>
+        </div>
+
+        <div class="camera-container">
+          <video id="videoFeed" autoplay muted playsinline></video>
+          <canvas id="faceCanvas"></canvas>
+          <div class="scan-line"></div>
+          <div class="camera-corners">
+            <span class="corner tl"></span>
+            <span class="corner tr"></span>
+            <span class="corner bl"></span>
+            <span class="corner br"></span>
+          </div>
+          <div class="recognition-status" id="recognitionStatus">
+            <div class="status-dot"></div>
+            <span>Scanning for faces…</span>
+          </div>
+          <!-- Time's up overlay -->
+          <div class="timesup-overlay hidden" id="timesupOverlay">
+            <div class="timesup-icon">⏰</div>
+            <div class="timesup-title">Session Ended</div>
+            <div class="timesup-sub">Time is up — attendance has been saved</div>
+          </div>
+        </div>
+
+        <!-- Recognized today -->
+        <div class="recognized-list">
+          <h4>Recognized Today <span class="count-badge" id="recognizedCount">0</span></h4>
+          <div class="recognized-chips" id="recognizedChips">
+            <span class="empty-msg">No students recognized yet</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Session ended summary -->
+      <div class="card session-summary hidden" id="sessionSummary">
+        <div class="summary-icon">✓</div>
+        <h3>Session Complete</h3>
+        <p id="summaryText">Attendance has been saved.</p>
+        <div class="summary-stats" id="summaryStats"></div>
+        <div class="summary-actions">
+          <button class="action-btn primary" onclick="newSession()">Start New Session</button>
+          <button class="action-btn secondary" onclick="showSection('absentees', null)">View Absentees</button>
+          <button class="action-btn secondary" onclick="exportSession()">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+              <polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/>
+            </svg>
+            Export CSV
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <!-- ── SECTION: Daily Attendance ── -->
+    <section class="dash-section hidden" id="section-absentees">
+      <div class="section-header">
+        <div>
+          <h2 class="section-title">Daily Attendance Logs</h2>
+          <p class="section-sub">View presentees and absentees respectively</p>
+        </div>
+        <div class="header-actions">
+          <input type="date" id="absenteeDate" class="dark-input small" onchange="loadAbsentees()"/>
+          <button class="action-btn secondary small" onclick="exportAbsentees()">Export</button>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="filter-row" style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:1rem;">
+          <div style="display:flex; gap:0.5rem;">
+            <button class="action-btn primary small" id="tabPresentees" onclick="switchAttTab('present')">Presentees</button>
+            <button class="action-btn secondary small" id="tabAbsentees" onclick="switchAttTab('absent')">Absentees</button>
+          </div>
+          <div style="display:flex; gap:0.5rem; flex-wrap:wrap;">
+            <input type="text" class="dark-input small search-input" id="attSearchInput" placeholder="Search student…" oninput="filterAbsentees()"/>
+            <select class="dark-input small" id="absenteeSubjectFilter" onchange="filterAbsentees()">
+              <option value="">All Subjects</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="table-wrap" id="presenteeTableWrap">
+          <table class="data-table" id="presenteeTable">
+            <thead>
+              <tr>
+                <th>#</th>
+                <th>Register No.</th>
+                <th>Name</th>
+                <th>Subject</th>
+                <th>Session Time</th>
+                <th>Status</th>
+              </tr>
+            </thead>
+            <tbody id="presenteeBody">
+              <!-- populated by JS -->
+            </tbody>
+          </table>
+          <div class="table-empty hidden" id="presenteeEmpty">
+            <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2">
+              <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/>
+              <polyline points="22 4 12 14.01 9 11.01"/>
+            </svg>
+            <p>No presentees found for this date</p>
+          </div>
+        </div>
+
+        <div class="table-wrap hidden" id="absenteeTableWrap">
+          <table class="data-table" id="absenteeTable">
+            <thead>
+              <tr>
+                <th>#</th>
+                <th>Register No.</th>
+                <th>Name</th>
+                <th>Subject</th>
+                <th>Session Time</th>
+                <th>Contact</th>
+                <th>Action</th>
+              </tr>
+            </thead>
+            <tbody id="absenteeBody">
+              <!-- populated by JS -->
+            </tbody>
+          </table>
+          <div class="table-empty hidden" id="absenteeEmpty">
+            <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2">
+              <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/>
+              <polyline points="22 4 12 14.01 9 11.01"/>
+            </svg>
+            <p>No absentees found for this date</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ── SECTION: Manage Students ── -->
+    <section class="dash-section hidden" id="section-students">
+      <div class="section-header">
+        <div>
+          <h2 class="section-title">Manage Students</h2>
+          <p class="section-sub">Add, edit, or remove student records & face datasets</p>
+        </div>
+        <button class="action-btn primary" onclick="openStudentModal('add')">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+            <line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/>
+          </svg>
+          Add Student
+        </button>
+      </div>
+
+      <div class="card">
+        <div class="filter-row">
+          <input type="text" class="dark-input small search-input" placeholder="Search by name or reg no…" oninput="filterStudents(this.value)" id="studentSearch"/>
+          <select class="dark-input small" id="batchFilter" onchange="filterStudents()">
+            <option value="">All Batches</option>
+          </select>
+          <select class="dark-input small" id="deptFilter" onchange="filterStudents()">
+            <option value="">All Departments</option>
+          </select>
+        </div>
+        <div class="table-wrap">
+          <table class="data-table" id="studentTable">
+            <thead>
+              <tr>
+                <th>#</th>
+                <th>Photo</th>
+                <th>Name</th>
+                <th>Register No.</th>
+                <th>Class / Section</th>
+                <th>Department</th>
+                <th>Batch</th>
+                <th>Email</th>
+                <th>Face Data</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody id="studentBody"></tbody>
+          </table>
+          <div class="table-empty hidden" id="studentEmpty">
+            <p>No students found.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ── SECTION: Reports ── -->
+    <section class="dash-section hidden" id="section-reports">
+      <div class="section-header">
+        <div>
+          <h2 class="section-title">Attendance Reports</h2>
+          <p class="section-sub">Detailed analytics and export options</p>
+        </div>
+        <div class="header-actions">
+          <select class="dark-input small" id="reportSubject">
+            <option value="">All Subjects</option>
+          </select>
+          <input type="date" id="reportFrom" class="dark-input small"/>
+          <span style="color:var(--text-muted)">to</span>
+          <input type="date" id="reportTo" class="dark-input small"/>
+          <button class="action-btn primary small" onclick="generateReport()">Generate</button>
+        </div>
+      </div>
+
+      <!-- Stats cards -->
+      <div class="stats-grid">
+        <div class="stat-card">
+          <div class="stat-icon" style="background:rgba(99,102,241,0.15);color:#818cf8">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
+              <circle cx="9" cy="7" r="4"/>
+              <path d="M23 21v-2a4 4 0 0 0-3-3.87"/>
+              <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+            </svg>
+          </div>
+          <div>
+            <span class="stat-value" id="statTotal">–</span>
+            <span class="stat-label">Total Students</span>
+          </div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon" style="background:rgba(34,197,94,0.12);color:#4ade80">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <polyline points="20 6 9 17 4 12"/>
+            </svg>
+          </div>
+          <div>
+            <span class="stat-value" id="statPresent">–</span>
+            <span class="stat-label">Avg Attendance</span>
+          </div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon" style="background:rgba(239,68,68,0.12);color:#f87171">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
+            </svg>
+          </div>
+          <div>
+            <span class="stat-value" id="statAbsent">–</span>
+            <span class="stat-label">Defaulters (&lt;75%)</span>
+          </div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon" style="background:rgba(251,191,36,0.12);color:#fbbf24">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <circle cx="12" cy="12" r="10"/>
+              <polyline points="12 6 12 12 16 14"/>
+            </svg>
+          </div>
+          <div>
+            <span class="stat-value" id="statSessions">–</span>
+            <span class="stat-label">Sessions Held</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-title-row">
+          <h3 class="card-title">Student-wise Report</h3>
+          <button class="action-btn secondary small" onclick="exportReport()">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+              <polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/>
+            </svg>
+            Export CSV
+          </button>
+        </div>
+        <div class="table-wrap">
+          <table class="data-table" id="reportTable">
+            <thead>
+              <tr>
+                <th>#</th>
+                <th>Name</th>
+                <th>Register No.</th>
+                <th>Classes Held</th>
+                <th>Present</th>
+                <th>Absent</th>
+                <th>Percentage</th>
+                <th>Status</th>
+              </tr>
+            </thead>
+            <tbody id="reportBody"></tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- ── SECTION: Reset Password ── -->
+    <section class="dash-section hidden" id="section-password">
+      <div class="section-header">
+        <div>
+          <h2 class="section-title">Reset Password</h2>
+          <p class="section-sub">Change your faculty account password</p>
+        </div>
+      </div>
+
+      <div class="card narrow-card">
+        <form class="auth-form" onsubmit="handlePasswordReset(event)">
+          <div class="form-group">
+            <label>Current Password</label>
+            <div class="input-wrap">
+              <input type="password" id="currentPass" placeholder="Current password" required class="dark-input"/>
+              <button type="button" class="toggle-pass" onclick="togglePass('currentPass')">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/>
+                </svg>
+              </button>
+            </div>
+          </div>
+          <div class="form-group">
+            <label>New Password</label>
+            <div class="input-wrap">
+              <input type="password" id="newPass" placeholder="New password (min 8 chars)" required minlength="8" class="dark-input"/>
+              <button type="button" class="toggle-pass" onclick="togglePass('newPass')">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/>
+                </svg>
+              </button>
+            </div>
+            <div class="password-strength" id="passStrength"></div>
+          </div>
+          <div class="form-group">
+            <label>Confirm New Password</label>
+            <div class="input-wrap">
+              <input type="password" id="confirmPass" placeholder="Repeat new password" required class="dark-input"/>
+            </div>
+          </div>
+          <div class="form-error hidden" id="passError"></div>
+          <div class="form-success hidden" id="passSuccess">Password updated successfully!</div>
+          <button type="submit" class="submit-btn faculty-btn">Update Password</button>
+        </form>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- ── MODAL: Add/Edit Student ── -->
+  <div class="modal-overlay hidden" id="studentModal">
+    <div class="modal">
+      <div class="modal-header">
+        <h3 id="modalTitle">Add Student</h3>
+        <button class="modal-close" onclick="closeModal('studentModal')">✕</button>
+      </div>
+      <form onsubmit="handleStudentSubmit(event)" class="auth-form modal-form">
+        <input type="hidden" id="editStudentId"/>
+        <div class="modal-two-col">
+          <div class="form-group">
+            <label>Full Name</label>
+            <input type="text" id="sName" placeholder="Student name" required class="dark-input"/>
+          </div>
+          <div class="form-group">
+            <label>Register Number</label>
+            <input type="text" id="sReg" placeholder="e.g. 22CS001" required class="dark-input"/>
+          </div>
+          <div class="form-group">
+            <label>Class</label>
+            <select id="sClass" class="dark-input" required>
+              <option value="" disabled selected>Select Class</option>
+              <option value="1st Year">1st Year</option>
+              <option value="2nd Year">2nd Year</option>
+              <option value="3rd Year">3rd Year</option>
+              <option value="4th Year">4th Year</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Section</label>
+            <select id="sSection" class="dark-input" required>
+              <option value="" disabled selected>Select Section</option>
+              <option value="A">Section A</option>
+              <option value="B">Section B</option>
+              <option value="C">Section C</option>
+              <option value="D">Section D</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Department</label>
+            <input type="text" id="sDept" placeholder="e.g. CSE" required class="dark-input"/>
+          </div>
+          <div class="form-group">
+            <label>Batch / Academic Year</label>
+            <input type="text" id="sBatch" placeholder="e.g. 2022-26" class="dark-input"/>
+          </div>
+          <div class="form-group">
+            <label>Email</label>
+            <input type="email" id="sEmail" placeholder="student@college.edu" class="dark-input"/>
+          </div>
+          <div class="form-group">
+            <label>Phone</label>
+            <input type="tel" id="sPhone" placeholder="Contact number" class="dark-input"/>
+          </div>
+        </div>
+
+        <!-- Face data capture -->
+        <div class="form-group">
+          <label>Face Dataset</label>
+          <div class="face-capture-area" id="faceCaptureArea">
+            <div class="face-preview-grid" id="facePreviewGrid">
+              <!-- face images shown here -->
+            </div>
+            <div class="face-capture-btns">
+              <button type="button" class="action-btn secondary small" onclick="captureFaceFromCamera()">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/>
+                  <circle cx="12" cy="13" r="4"/>
+                </svg>
+                Capture from Camera
+              </button>
+              <label class="action-btn secondary small" style="cursor:pointer">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+                  <polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/>
+                </svg>
+                Upload Images
+                <input type="file" id="faceUpload" accept="image/*" multiple style="display:none" onchange="handleFaceUpload(event)"/>
+              </label>
+            </div>
+            <p class="hint-text">Capture or upload 3–5 clear face images for best recognition accuracy</p>
+          </div>
+        </div>
+
+        <div class="modal-footer">
+          <button type="button" class="action-btn secondary" onclick="closeModal('studentModal')">Cancel</button>
+          <button type="submit" class="action-btn primary">Save Student</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- ── MODAL: Delete Confirm ── -->
+  <div class="modal-overlay hidden" id="deleteModal">
+    <div class="modal small-modal">
+      <div class="modal-header">
+        <h3>Remove Student</h3>
+        <button class="modal-close" onclick="closeModal('deleteModal')">✕</button>
+      </div>
+      <p style="color:var(--text-muted);margin-bottom:1.5rem;">Are you sure you want to remove <strong id="deleteStudentName"></strong> and all their face data? This cannot be undone.</p>
+      <div class="modal-footer">
+        <button class="action-btn secondary" onclick="closeModal('deleteModal')">Cancel</button>
+        <button class="action-btn danger" onclick="confirmDelete()">Remove</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── MODAL: Camera Capture for Face ── -->
+  <div class="modal-overlay hidden" id="cameraModal">
+    <div class="modal">
+      <div class="modal-header">
+        <h3>Capture Face Image</h3>
+        <button class="modal-close" onclick="closeCameraModal()">✕</button>
+      </div>
+      <div class="camera-container small-cam">
+        <video id="captureVideo" autoplay muted playsinline></video>
+        <canvas id="captureCanvas" style="display:none"></canvas>
+        <div class="camera-corners">
+          <span class="corner tl"></span><span class="corner tr"></span>
+          <span class="corner bl"></span><span class="corner br"></span>
+        </div>
+      </div>
+      <div class="modal-footer" style="margin-top:1rem">
+        <button class="action-btn secondary" onclick="closeCameraModal()">Cancel</button>
+        <button class="action-btn primary" onclick="snapFaceImage()">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="12" cy="12" r="3"/>
+            <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/>
+          </svg>
+          Snap
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast -->
+  <div class="toast-container" id="toastContainer"></div>
+
+  <script src="js/api.js?v=5"></script>
+  <script src="js/camera.js?v=5"></script>
+  <script src="js/attendance.js?v=5"></script>
+  <script src="js/main.js?v=5"></script>
+</body>
+</html>

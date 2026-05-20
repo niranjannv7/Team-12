@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Student Portal — Smart Attendance</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;1,9..40,300&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="css/style.css"/>
+  <link rel="stylesheet" href="css/dashboard.css"/>
+</head>
+<body class="dashboard-page student-portal">
+
+  <div class="bg-grid"></div>
+
+  <!-- Top bar for student portal -->
+  <header class="student-header">
+    <div class="brand compact">
+      <div class="brand-icon small">
+        <svg width="18" height="18" viewBox="0 0 32 32" fill="none">
+          <circle cx="16" cy="10" r="5" stroke="currentColor" stroke-width="2"/>
+          <path d="M8 28c0-4.418 3.582-8 8-8s8 3.582 8 8" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+          <circle cx="16" cy="16" r="14" stroke="currentColor" stroke-width="1.5" stroke-dasharray="4 2"/>
+        </svg>
+      </div>
+      <span>Smart Attendance</span>
+    </div>
+    <div class="student-info-bar">
+      <div class="student-badge">
+        <div class="avatar student-avatar" id="studentAvatarHeader">AK</div>
+        <div>
+          <span class="student-name-bar" id="studentNameHeader">Aravind Kumar</span>
+          <span class="student-reg-bar" id="studentRegHeader">22CS001</span>
+        </div>
+      </div>
+      <button class="logout-btn" onclick="logout()">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
+          <polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/>
+        </svg>
+        Logout
+      </button>
+    </div>
+  </header>
+
+  <main class="student-main">
+
+    <!-- Welcome banner -->
+    <div class="student-welcome">
+      <div>
+        <h1>Hello, <span id="welcomeName">Student</span> 👋</h1>
+        <p class="section-sub">Select a faculty below to view your attendance</p>
+      </div>
+      <div class="live-date" id="studentDate"></div>
+    </div>
+
+    <!-- My overview cards -->
+    <div class="stats-grid student-stats" id="overviewStats" style="display:none">
+      <div class="stat-card">
+        <div class="stat-icon" style="background:rgba(99,102,241,0.15);color:#818cf8">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <rect x="3" y="4" width="18" height="18" rx="2" ry="2"/>
+            <line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/>
+            <line x1="3" y1="10" x2="21" y2="10"/>
+          </svg>
+        </div>
+        <div>
+          <span class="stat-value" id="ovTotal">–</span>
+          <span class="stat-label">Total Classes</span>
+        </div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon" style="background:rgba(34,197,94,0.12);color:#4ade80">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <polyline points="20 6 9 17 4 12"/>
+          </svg>
+        </div>
+        <div>
+          <span class="stat-value" id="ovPresent">–</span>
+          <span class="stat-label">Attended</span>
+        </div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon" style="background:rgba(239,68,68,0.12);color:#f87171">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
+          </svg>
+        </div>
+        <div>
+          <span class="stat-value" id="ovAbsent">–</span>
+          <span class="stat-label">Absent</span>
+        </div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon" style="background:rgba(251,191,36,0.12);color:#fbbf24">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/>
+            <polyline points="22 4 12 14.01 9 11.01"/>
+          </svg>
+        </div>
+        <div>
+          <span class="stat-value" id="ovPercent">–</span>
+          <span class="stat-label">Overall %</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Faculty list -->
+    <div class="card">
+      <div class="card-title-row">
+        <h3 class="card-title">Faculty Members</h3>
+        <input type="text" class="dark-input small search-input" placeholder="Search faculty…" oninput="filterFaculty(this.value)"/>
+      </div>
+      <div class="faculty-grid" id="facultyGrid">
+        <!-- Faculty cards rendered by JS -->
+        <div class="loading-placeholder">
+          <div class="spinner"></div>
+          <p>Loading faculty list…</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Attendance detail panel (shown when faculty selected) -->
+    <div class="card hidden" id="attendanceDetail">
+      <div class="detail-header">
+        <button class="back-chip" onclick="closeFacultyDetail()">← Back</button>
+        <div class="detail-faculty-info">
+          <div class="avatar" id="detailFacultyAvatar">DR</div>
+          <div>
+            <span class="detail-faculty-name" id="detailFacultyName">Dr. Ramesh</span>
+            <span class="detail-faculty-subject" id="detailFacultySubject">Data Structures</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Attendance ring + stats -->
+      <div class="attendance-overview">
+        <div class="attendance-ring-wrap">
+          <svg class="attendance-ring" viewBox="0 0 120 120" width="120" height="120">
+            <circle cx="60" cy="60" r="50" fill="none" stroke="rgba(255,255,255,0.06)" stroke-width="10"/>
+            <circle class="ring-progress" id="ringProgress" cx="60" cy="60" r="50" fill="none"
+              stroke="url(#ringGrad)" stroke-width="10" stroke-linecap="round"
+              stroke-dasharray="314" stroke-dashoffset="314"
+              transform="rotate(-90 60 60)"/>
+            <defs>
+              <linearGradient id="ringGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+                <stop offset="0%" stop-color="#6366f1"/>
+                <stop offset="100%" stop-color="#a78bfa"/>
+              </linearGradient>
+            </defs>
+            <text x="60" y="56" text-anchor="middle" fill="white" font-size="18" font-weight="700" font-family="Syne" id="ringPercent">–</text>
+            <text x="60" y="72" text-anchor="middle" fill="rgba(255,255,255,0.5)" font-size="9" font-family="DM Sans">Attendance</text>
+          </svg>
+        </div>
+
+        <div class="attendance-numbers">
+          <div class="att-num-row">
+            <span class="att-label">Classes Conducted</span>
+            <span class="att-val" id="detailTotal">–</span>
+          </div>
+          <div class="att-num-row">
+            <span class="att-label">Classes Attended</span>
+            <span class="att-val present" id="detailPresent">–</span>
+          </div>
+          <div class="att-num-row">
+            <span class="att-label">Classes Absent</span>
+            <span class="att-val absent" id="detailAbsent">–</span>
+          </div>
+          <div class="att-num-row">
+            <span class="att-label">Required to Maintain 75%</span>
+            <span class="att-val" id="detailRequired">–</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Status alert -->
+      <div class="attendance-alert hidden" id="attAlert"></div>
+
+      <!-- Session-wise breakdown -->
+      <div style="margin-top:1.5rem">
+        <h4 style="margin-bottom:1rem;font-size:0.85rem;text-transform:uppercase;letter-spacing:0.08em;color:var(--text-muted)">Session History</h4>
+        <div class="table-wrap">
+          <table class="data-table" id="sessionTable">
+            <thead>
+              <tr>
+                <th>Date</th>
+                <th>Time</th>
+                <th>Subject</th>
+                <th>Duration</th>
+                <th>Status</th>
+              </tr>
+            </thead>
+            <tbody id="sessionBody"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+  </main>
+
+  <!-- Toast -->
+  <div class="toast-container" id="toastContainer"></div>
+
+  <script src="js/api.js?v=6"></script>
+  <script src="js/main.js?v=6"></script>
+</body>
+</html>
